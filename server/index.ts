@@ -11,13 +11,13 @@ const io = new Server(server, {
   },
 })
 
-type IBingoSquare = { selectedColor: string; text: string; user: string }
+type IBingoSquare = { selectedColors: string[]; text: string; user: string }
 
 io.on('connection', socket => {
   console.log('connection')
-  socket.on('cell-click', ({ selectedColor, text, user }: IBingoSquare) => {
-    socket.broadcast.emit('cell-click', { selectedColor, text, user })
-    console.log(selectedColor, text, user, 'index.tx cell-click')
+  socket.on('cell-click', ({ selectedColors, text, user }: IBingoSquare) => {
+    socket.broadcast.emit('cell-click', { selectedColors, text, user })
+    console.log(selectedColors, text, user, 'index.tx cell-click')
   })
 })
 

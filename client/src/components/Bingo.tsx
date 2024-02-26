@@ -14,7 +14,7 @@ const colors = [
 interface ItemObject {
   text: string
   user: string | null
-  color: string | null
+  selectedColors: string[]
 }
 const Bingo = () => {
   const items = [
@@ -49,10 +49,9 @@ const Bingo = () => {
     return items.map(item => ({
       text: item,
       user: null,
-      color: null,
+      selectedColors: [],
     }))
   })
-  type IBingoSquare = { selectedColor: string; text: string; user: string }
   const [selectedColor, setSelectedColor] = useState<string>('red')
   const handleColorSelect = (color: string) => {
     setSelectedColor(color)
@@ -60,38 +59,39 @@ const Bingo = () => {
   const handleCellClick = (text: string) => {
     const user = 'ale'
     let preEmitted = false
-
     setItemObjects(prev => {
       return prev.map(item => {
         if (item.text === text) {
-          if (item.color === selectedColor) {
+          if (item.selectedColors && item.selectedColors.includes(selectedColor)) {
             console.log('same color clicked')
-            socket.emit('cell-click', { selectedColor: null, text, user: null })
+            const newSelectedColors = item.selectedColors.filter(color => color !== selectedColor)
+            socket.emit('cell-click', { selectedColors: newSelectedColors, text, user: null })
             preEmitted = true
-            return { ...item, user: null, color: null }
+            return { ...item, user: null, selectedColors: newSelectedColors }
           } else {
+            const newSelectedColors = item.selectedColors.concat(selectedColor)
+            socket.emit('cell-click', { selectedColors: newSelectedColors, text, user })
             return {
               ...item,
               user,
-              color: selectedColor,
+              selectedColors: item.selectedColors.concat(selectedColor),
             }
           }
         }
         return item
       })
     })
-    if (!preEmitted) socket.emit('cell-click', { selectedColor, text, user })
   }
   useEffect(() => {
-    socket.on('cell-click', ({ selectedColor, text, user }: IBingoSquare) => {
-      console.log(selectedColor, text, user, 'useEffect cell-click')
+    socket.on('cell-click', ({ selectedColors, text, user }: ItemObject) => {
+      console.log(selectedColors, text, user, 'useEffect cell-click')
       setItemObjects(prev => {
         return prev.map(item => {
           if (item.text === text) {
             return {
               text,
               user,
-              color: selectedColor,
+              color: selectedColors,
             }
           }
           return item
@@ -145,18 +145,36 @@ const BingoCell = ({
     handleCellClick(item.text)
   }
   const renderColor = (scenario: string) => {
-    const neededColor = colors.find(color => color.text === item.color)
-    if (scenario === 'hover') return neededColor?.hover
-    return neededColor?.selected
+    let neededColors: object[] = []
+    colors.map(color => {
+      if (item.selectedColors.includes(color.text)) {
+        neededColors.push(color)
+      }
+    })
+    console.log(neededColors)
+    // if (scenario === 'hover') return neededColor?.hover
+    // return neededColor?.selected
   }
+  const renderCols = () => {
+    const size = item.selectedColors.length
+    return `col-span-${size}`
+  }
+  console.log(item)
   return (
     <div
-      className={`w-full p-1 aspect-[5/6]  sm:aspect-square overflow-hidden  flex items-center justify-center text-center rounded-[0.5rem] transition-colors duration-75 ${
-        item.color !== null ? renderColor('hover') : 'hover:bg-foreground/15'
-      } ${item.color !== null ? renderColor('bg') : 'bg-foreground/10'} cursor-pointer`}
+      className={`w-full p-1 aspect-[5/6] relative sm:aspect-square overflow-hidden  flex items-center justify-center text-center rounded-[0.5rem] transition-colors duration-75 ${
+        item.selectedColors && item.selectedColors.length > 0 ? renderColor('hover') : 'hover:bg-foreground/15'
+      } ${item.selectedColors && item.selectedColors.length > 0 ? renderColor('bg') : 'bg-foreground/10'} cursor-pointer`}
       onClick={handleClick}
     >
-      <span className='font-bold text-sm md:text-base'>{item.text}</span>
+      <span className='font-bold text-sm md:text-base z-10'>{item.text}</span>
+      {item.selectedColors && item.selectedColors.length > 0 && (
+        <div className={`absolute top-0 left-0 w-full h-full bg-red-500/50 grid ${renderCols()}`}>
+          {item.selectedColors.map((color, index) => {
+            return <div key={index} className={`${colors.find(c => c.text === color)?.selected}`}></div>
+          })}
+        </div>
+      )}
     </div>
   )
 }
