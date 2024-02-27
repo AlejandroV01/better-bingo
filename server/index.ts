@@ -2,7 +2,7 @@ const express = require('express')
 const http = require('http')
 const app = express()
 const server = http.createServer(app)
-
+import { Request, Response } from 'express'
 import { Server } from 'socket.io'
 
 const io = new Server(server, {
@@ -25,7 +25,7 @@ server.listen(3001, () => {
   console.log('Server listening on post 3001')
 })
 
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.status(200)
   res.send('Hello World!')
 })
