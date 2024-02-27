@@ -24,3 +24,8 @@ io.on('connection', socket => {
 server.listen(3001, () => {
   console.log('Server listening on post 3001')
 })
+
+app.get('/', (req, res) => {
+  res.status(200)
+  res.send('Hello World!')
+})
