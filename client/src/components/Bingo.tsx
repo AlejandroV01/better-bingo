@@ -4,16 +4,16 @@ import { io } from 'socket.io-client'
 
 const socket = io('http://localhost:3001')
 const colors = [
-  { text: 'red', color: 'bg-[#FF4F4F]/90', hover: 'hover:bg-[#FF4F4F]/75', selected: 'bg-[#FF4F4F]/90' },
-  { text: 'blue', color: 'bg-[#4FA6FF]/90', hover: 'hover:bg-[#4FA6FF]/75', selected: 'bg-[#4FA6FF]/90' },
-  { text: 'green', color: 'bg-[#67DE6A]/90', hover: 'hover:bg-[#67DE6A]/75', selected: 'bg-[#67DE6A]/90' },
-  { text: 'orange', color: 'bg-[#FFA937]/90', hover: 'hover:bg-[#FFA937]/75', selected: 'bg-[#FFA937]/90' },
-  { text: 'pink', color: 'bg-[#F97AFF]/90', hover: 'hover:bg-[#F97AFF]/75', selected: 'bg-[#F97AFF]/90' },
-  { text: 'purple', color: 'bg-[#9177FF]/90', hover: 'hover:bg-[#9177FF]/75', selected: 'bg-[#9177FF]/90' },
+  { text: 'red', color: 'bg-[#FF4F4F]/80', hover: 'group-hover:bg-[#FF4F4F]/90', selected: 'bg-[#FF4F4F]/80' },
+  { text: 'blue', color: 'bg-[#4FA6FF]/80', hover: 'group-hover:bg-[#4FA6FF]/90', selected: 'bg-[#4FA6FF]/80' },
+  { text: 'green', color: 'bg-[#67DE6A]/80', hover: 'group-hover:bg-[#67DE6A]/90', selected: 'bg-[#67DE6A]/80' },
+  { text: 'orange', color: 'bg-[#FFA937]/80', hover: 'group-hover:bg-[#FFA937]/90', selected: 'bg-[#FFA937]/80' },
+  { text: 'pink', color: 'bg-[#F97AFF]/80', hover: 'group-hover:bg-[#F97AFF]/90', selected: 'bg-[#F97AFF]/80' },
+  { text: 'purple', color: 'bg-[#9177FF]/80', hover: 'group-hover:bg-[#9177FF]/90', selected: 'bg-[#9177FF]/80' },
 ]
 interface ItemObject {
   text: string
-  user: string | null
+  user: string[]
   selectedColors: string[]
 }
 const Bingo = () => {
@@ -48,7 +48,7 @@ const Bingo = () => {
   const [itemObjects, setItemObjects] = useState<ItemObject[]>(() => {
     return items.map(item => ({
       text: item,
-      user: null,
+      user: [],
       selectedColors: [],
     }))
   })
@@ -65,15 +65,15 @@ const Bingo = () => {
           if (item.selectedColors && item.selectedColors.includes(selectedColor)) {
             console.log('same color clicked')
             const newSelectedColors = item.selectedColors.filter(color => color !== selectedColor)
-            socket.emit('cell-click', { selectedColors: newSelectedColors, text, user: null })
+            socket.emit('cell-click', { selectedColors: newSelectedColors, text, user: [] })
             preEmitted = true
-            return { ...item, user: null, selectedColors: newSelectedColors }
+            return { ...item, user: [], selectedColors: newSelectedColors }
           } else {
             const newSelectedColors = item.selectedColors.concat(selectedColor)
             socket.emit('cell-click', { selectedColors: newSelectedColors, text, user })
             return {
               ...item,
-              user,
+              user: item.user.concat(user),
               selectedColors: item.selectedColors.concat(selectedColor),
             }
           }
@@ -91,7 +91,7 @@ const Bingo = () => {
             return {
               text,
               user,
-              color: selectedColors,
+              selectedColors,
             }
           }
           return item
@@ -169,9 +169,9 @@ const BingoCell = ({
     >
       <span className='font-bold text-sm md:text-base z-10'>{item.text}</span>
       {item.selectedColors && item.selectedColors.length > 0 && (
-        <div className={`absolute top-0 left-0 w-full h-full bg-red-500/50 grid ${renderCols()}`}>
-          {item.selectedColors.map((color, index) => {
-            return <div key={index} className={`${colors.find(c => c.text === color)?.selected}`}></div>
+        <div className={`group absolute top-0 left-0 w-full h-full grid ${renderCols()}`}>
+          {item.selectedColors.sort().map((color, index) => {
+            return <div key={index} className={`${colors.find(c => c.text === color)?.selected} ${colors.find(c => c.text === color)?.hover}`}></div>
           })}
         </div>
       )}
