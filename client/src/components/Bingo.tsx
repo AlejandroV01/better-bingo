@@ -1,5 +1,5 @@
 'use client'
-import React, { SetStateAction, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
@@ -65,7 +65,6 @@ const Bingo = () => {
   })
   const [selectedColor, setSelectedColor] = useState<string>('red')
   const areArraysEqual = (arr1: string[], arr2: string[]) => {
-    console.log('checking arrays', arr1, arr2)
     if (arr1.length !== arr2.length) {
       return false
     }
@@ -88,7 +87,6 @@ const Bingo = () => {
       return prev.map(item => {
         if (item.text === text) {
           if (item.selectedColors && item.selectedColors.includes(selectedColor)) {
-            console.log('same color clicked')
             const newSelectedColors = item.selectedColors.filter(color => color !== selectedColor)
             socket.emit('cell-click', { selectedColors: newSelectedColors, text, user: [] })
             preEmitted = true
@@ -128,20 +126,18 @@ const Bingo = () => {
       setItemObjects(allItems)
     })
   }, [])
-  console.log(itemObjects)
   const handleDoneEditClick = () => {
     setEditCells(false)
     if (!areArraysEqual(items, itemsPrev)) {
-      console.log('calling websocket')
+      console.log('calling websocket for done edit')
       socket.emit('cell-edit', itemObjects)
       setItemObjectsPrev(itemObjects)
       setItemsPrev(items)
     } else {
-      console.log('same cells')
+      console.log('same cells done edit')
     }
   }
   const editInputOnChange = (newText: string, original: string) => {
-    console.log(newText, original)
     setItems(prev => prev.map(item => (item === original ? newText : item)))
     setItemObjects(prev => {
       return prev.map(item => {
@@ -217,20 +213,10 @@ const BingoCell = ({
     if (editCells) return
     handleCellClick(item.text)
   }
-  const renderColor = (scenario: string) => {
-    let neededColors: object[] = []
-    colors.map(color => {
-      if (item.selectedColors.includes(color.text)) {
-        neededColors.push(color)
-      }
-    })
-    console.log(neededColors)
-  }
   const renderCols = () => {
     const size = item.selectedColors.length
     return `col-span-${size}`
   }
-
   return (
     <div
       className={`group w-full p-1 aspect-[5/6] relative sm:aspect-square overflow-hidden  flex items-center justify-center text-center rounded-[0.5rem] transition-colors duration-75 hover:bg-foreground/15
