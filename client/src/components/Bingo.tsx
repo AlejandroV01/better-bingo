@@ -184,7 +184,7 @@ const Bingo = () => {
         })}
       </div>
       {editCells ? (
-        <Button onClick={handleDoneEditClick} variant={'secondary'} className='bg-green-600'>
+        <Button onClick={handleDoneEditClick} variant={'secondary'} className='bg-green-600 hover:bg-green-500'>
           Done
         </Button>
       ) : (

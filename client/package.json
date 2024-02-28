@@ -11,6 +11,7 @@
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-slot": "^1.0.2",
+    "bufferutil": "^4.0.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "lucide-react": "^0.340.0",
@@ -20,7 +21,9 @@
     "react-dom": "^18",
     "socket.io-client": "^4.7.4",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "utf-8-validate": "^5.0.10",
+    "ws": "^8.16.0"
   },
   "devDependencies": {
     "@types/node": "^20",
