@@ -2,7 +2,7 @@
 import React, { SetStateAction, useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 
-const socket = io('https://better-bingo.onrender.com/')
+const socket = io('http://localhost:3001')
 const colors = [
   { text: 'red', color: 'bg-[#FF4F4F]/80', hover: 'group-hover:bg-[#FF4F4F]/90', selected: 'bg-[#FF4F4F]/80' },
   { text: 'blue', color: 'bg-[#4FA6FF]/80', hover: 'group-hover:bg-[#4FA6FF]/90', selected: 'bg-[#4FA6FF]/80' },
