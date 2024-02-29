@@ -1,6 +1,5 @@
 import Bingo from '@/components/Bingo'
 import BingoInfoPanel from '@/components/BingoInfoPanel/BingoInfoPanel'
-import Stopwatch from '@/components/Stopwatch'
 import React from 'react'
 const BingoPage = () => {
   return (
