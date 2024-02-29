@@ -1,12 +1,17 @@
 'use client'
+import { useAppDispatch, useAppSelector } from '@/state/hooks'
+import { updateTime } from '@/state/stopwatch/stopwatch.slice'
+import { AppDispatch, RootState } from '@/state/store'
 import React, { useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Button } from '../ui/button'
 import { Card, CardContent, CardHeader } from '../ui/card'
 const Stopwatch = ({ className }: { className?: string }) => {
   const [isActive, setIsActive] = useState(false)
   const [isPaused, setIsPaused] = useState(true)
   const [time, setTime] = useState(0)
-
+  // const dispatch = useAppDispatch()
+  // const currentTime = useAppSelector((state: RootState) => state.stopwatch.stateTime)
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null
 
@@ -21,7 +26,6 @@ const Stopwatch = ({ className }: { className?: string }) => {
       interval && clearInterval(interval)
     }
   }, [isActive, isPaused])
-
   const handleStart = () => {
     setIsActive(true)
     setIsPaused(false)

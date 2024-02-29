@@ -3,6 +3,8 @@ import { ModeToggle } from '@/components/theme-switch'
 import { cn } from '@/lib/utils'
 import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
+import { Provider as ReduxProvider } from 'react-redux'
+import StoreProvider from './StoreProvider'
 import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 const poppins = Poppins({ subsets: ['latin'], weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'] })
@@ -20,10 +22,12 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={cn('min-h-screen bg-background poppins antialiased')}>
-        <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
-          <ModeToggle />
-          {children}
-        </ThemeProvider>
+        <StoreProvider>
+          <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
+            <ModeToggle />
+            {children}
+          </ThemeProvider>
+        </StoreProvider>
       </body>
     </html>
   )
